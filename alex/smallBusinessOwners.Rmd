@@ -1,0 +1,176 @@
+---
+title: "smallBusinessOwners"
+author: "Alex Ackerman"
+date: "September 15, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(dplyr)
+library(tidyverse)
+library(forcats)
+```
+
+
+```{r}
+pums <- read_csv("/Users/hackrman/Dropbox/UTSA/Data Analytics Visualization and Communication/finalProject/pums_csv/pums.csv")
+head(pums)
+```
+
+```{r}
+owner1 <- pums %>% filter(PCT1 == 100)
+head(owner1)
+```
+
+```{r}
+fipsStateCodes <- read_csv("/Users/hackrman/Dropbox/UTSA/Data Analytics Visualization and Communication/finalProject/fips_state.csv")
+fipsStateCodes <- add_row(fipsStateCodes, fips_code = "S1", post_code = "AK and WY", state = "Alaska and Wyoming")
+fipsStateCodes <- add_row(fipsStateCodes, fips_code = "S2", post_code = "DE and DC", state = "Delaware and District of Columbia")
+fipsStateCodes <- add_row(fipsStateCodes, fips_code = "S3", post_code = "ND and SD", state = "North Dakota and South Dakota")
+fipsStateCodes <- add_row(fipsStateCodes, fips_code = "S4", post_code = "RI and VE", state = "Rhode Island and Vermont")
+fipsStateCodes
+```
+
+```{r}
+ggplot(owner1) +
+  geom_bar(
+    aes(x = fct_rev(fct_infreq(FIPST)), fill = RACE1),
+    color = "white"
+  ) +
+  scale_x_discrete(
+    breaks = fipsStateCodes$fips_code,
+    labels = fipsStateCodes$post_code
+  ) + 
+  scale_fill_discrete(
+    name = "Races",
+    breaks = c("A", "A S", "AP", 
+               "B", "B S", "B P", "B A", "BI",
+               "I", "I S", "I P", "IA",
+               "P", "PS", "S",
+               "W", "W S", "W P", "W A", "W I", "WB"),
+    labels = c("Asian", "Asian AND Some Other Race", "Asian AND Native Hawaiian and/ or Other Pacific Islander",
+               "Black", "Black AND Some Other Race", "Black AND Native Hawaiian and/ or Other Pacific Islander", "Black AND Asian", "Black AND Native American and/or Alaska Native",
+               "Native American and/or Alaska Native", "Native American and/or Alaska Native AND Some Other Race", "Native American and/or Alaska Native AND Native Hawaiian and/ or Other Pacific Islander", "Native American and/or Alaska Native AND Asian",
+               "Native Hawaiian and/ or Other Pacific Islander", "Native Hawaiian and/ or Other Pacific Islander AND Some Other Race", "Some Other Race",
+               "White", "White AND Some Other Race", "White AND Native Hawaiian and/ or Other Pacific Islander", "White AND Asian", "White and Native American and/or Alaska Native", "White AND Black")
+  ) +
+  labs(
+    x = "State",
+    y = "Number of Businesses"
+  ) +
+  theme(
+    legend.position = "right",
+    legend.text = element_text(size = 6),
+    legend.title = element_text(size = 10),
+  ) +
+  coord_flip() 
+```
+
+
+
+```{r}
+ggplot(owner1) +
+  geom_bar(
+    aes(FIPST, fill = RACE1),
+    color = "white"
+  ) +
+  scale_x_discrete(
+    breaks = fipsStateCodes$fips_code,
+    labels = fipsStateCodes$post_code
+  ) + 
+  labs(
+    x = "State",
+    y = "Number of Businesses"
+  ) +
+  coord_flip()
+```
+
+
+
+
+
+
+
+```{r}
+industryData <- owner1 %>% filter(SECTOR == 71)
+                
+
+#industryData <- industryData %>% filter(RACE1 != "W")
+#industryData <- industryData %>% filter(RACE1 != "B")
+#industryData <- industryData %>% filter(RACE1 != "A")
+industryData
+```
+
+
+```{r}
+ggplot(industryData) +
+  geom_bar(
+    aes(RACE1),
+    color = "black",
+    fill = "yellow",
+  ) +
+  scale_y_continuous(
+    labels = scales::comma
+  ) +
+  labs(
+    x = "Industry",
+    y = "Number of Businesses",
+    title = "Number of Businesses in the United States Based on Race"
+  ) +
+    scale_x_discrete(
+    name = "Races",
+    breaks = c("A", "A S", "AP", 
+               "B", "B S", "B P", "B A", "BI",
+               "I", "I S", "I P", "IA",
+               "P", "PS", "S",
+               "W", "W S", "W P", "W A", "W I", "WB"),
+    labels = c("Asian", "Asian AND Some Other Race", "Asian AND Native Hawaiian and/ or Other Pacific Islander",
+               "Black", "Black AND Some Other Race", "Black AND Native Hawaiian and/ or Other Pacific Islander", "Black AND Asian", "Black AND Native American and/or Alaska Native",
+               "Native American and/or Alaska Native", "Native American and/or Alaska Native AND Some Other Race", "Native American and/or Alaska Native AND Native Hawaiian and/ or Other Pacific Islander", "Native American and/or Alaska Native AND Asian",
+               "Native Hawaiian and/ or Other Pacific Islander", "Native Hawaiian and/ or Other Pacific Islander AND Some Other Race", "Some Other Race",
+               "White", "White AND Some Other Race", "White AND Native Hawaiian and/ or Other Pacific Islander", "White AND Asian", "White and Native American and/or Alaska Native", "White AND Black")
+  ) +
+  theme(
+        axis.text.x = element_text(vjust = 1, hjust=1, angle = 90)
+  )
+```
+
+```{r}
+ggplot(industryData) +
+  geom_bar(
+    aes(RACE1),
+    color = "black",
+    fill = "yellow"
+  ) +
+  scale_y_continuous(
+    labels = scales::comma
+  ) +
+  labs(
+    x = "Industry",
+    y = "Number of Businesses"
+  ) +
+  theme(
+        axis.text.x = element_text(vjust = 1, hjust=1, angle = 30),
+
+  )
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
