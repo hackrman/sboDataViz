@@ -1,0 +1,188 @@
+---
+title: "FINAL PROJECT"
+author: "Daniel Soria"
+date: "9/21/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(ggplot2)
+```
+
+```{r}
+library(dplyr)
+```
+
+```{r}
+Pums <- read.csv(file = "C:/Users/gsoria/Documents/Fall 2019/DA 6233 Malshe/Final Project/pums.csv", header = TRUE)
+```
+
+```{r}
+head(Pums, 25)
+```
+
+```{r}
+Owner1 <- filter(Pums, PCT1 == 100, EDUC1 %in% c(1,2,3,4,5,6,7))
+
+head(Owner1, 30)
+```
+
+
+```{r}
+Owner1 %>% 
+  select(FOUNDED1, 
+PURCHASED1, 
+INHERITED1, 
+RECEIVED1 ) %>% 
+  mutate(FOUNDED1 = ifelse(FOUNDED1 == 2, 0, 1),
+         PURCHASED1 = ifelse(PURCHASED1 == 2, 0, 1),
+         INHERITED1 = ifelse(INHERITED1 == 2, 0, 1),
+         RECEIVED1 = ifelse(RECEIVED1 == 2, 0, 1)) %>% 
+  summarize_all(sum, na.rm = TRUE) %>%
+  reshape2::melt() %>% 
+  ggplot(aes(x = variable, y = value, fill = variable)) +
+  geom_col() +
+  geom_text(aes(label = scales::comma(value)), vjust = -0.3) +
+   labs(x="Acquisition Method",
+       y="Count",
+       title="How Business was Acquired") +
+  
+  scale_x_discrete(breaks = c(1,2,3,4)) +
+  
+  scale_fill_discrete(name= "Acquisition Method", labels= c("Founded", "Purchased" , "Inherited", "Received")) +
+  
+  scale_y_continuous(labels = scales::comma_format())+
+
+  theme_bw()
+
+
+
+
+```
+
+
+
+
+# Of the single owned business, what is the level of education
+```{r}
+ggplot(Owner1, aes(EDUC1, fill = factor(EDUC1))) + 
+  
+  geom_bar()+
+  
+   labs(x="Education Level",
+       y="Count",
+       title= "Education of Single Business Owners") +
+  
+scale_x_continuous(breaks = c(1,2,3,4,5,6,7)) +
+  
+  scale_y_continuous(labels = scales::comma_format())+
+  
+  scale_fill_discrete(name="Education Level", labels= c("Less Than High School", "High School" , "Technical School", "Some College", "Associate's", "Bachelor's", "Master's +")) +
+  
+
+  
+ 
+  theme_bw()
+
+```
+
+
+
+# How did they acquire the business?
+# I need to create a bar chart that has count on the Y axis and only counts the instances where a person selected 1 for founded, 1 for purchased, 1 for inherited, and 1 for received as gift.
+
+#I know that the counts (y axis) should read 557k for founded, 11k for inherited, 93k for purchased, and 13k for received as gift, however I don't know 
+
+#Should I create new subsets(seen below) and then put them all on the x - axis? Or is there a way to use the original data set and use a 'sumif' type function...
+
+FOUNDED1 
+PURCHASED1 
+INHERITED1 
+RECEIVED1 
+ACQUIRENR1 
+```{r}
+FOUNDED1sub <- filter(Owner1, FOUNDED1 == 1, FOUNDED1 %in% c(1))
+
+PURCHASED1sub <- filter(Owner1, PURCHASED1 == 1, PURCHASED1  %in% c(1))
+
+INHERITED1sub <- filter(Owner1, INHERITED1 == 1, INHERITED1  %in% c(1))
+
+RECEIVED1sub <- filter(Owner1, RECEIVED1 == 1, RECEIVED1  %in% c(1))
+
+head(RECEIVED1sub, 30)
+```
+
+#convert 2s to 0
+#use geom bar
+
+
+
+```{r}
+ggplot(Owner1,aes(FOUNDED1, fill = factor(FOUNDED1))) +
+  
+ geom_bar(position = "dodge", color = "black") +
+ labs(title = "How Business was Acquired",
+      x = "Method",
+      y = "Count") +
+    
+ scale_fill_discrete(name = "Answered",
+                     labels = c("Answered 1","Answered 2", "Answered 3", "Answered 4")) +
+  
+ scale_x_continuous(breaks = c(1:4),
+                    labels = c("Founded","Purchased", "Inerited", "Gift")) +
+  
+ theme(axis.text.x = element_text(angle=30))+
+ scale_y_continuous(labels = scales::comma_format()) +
+ theme(axis.text.x = element_text(angle=30)) +
+ theme_classic()
+```
+
+
+```{r}
+ggplot(data = Owner1, aes(FOUNDED1sub))
+```
+
+
+
+```{r}
+ggplot(FOUNDED1sub, aes(FOUNDED1, fill = FOUNDED1)) + 
+  
+  geom_histogram()+
+ 
+  theme_bw()
+```
+
+```{r}
+Acquired <- Owner1(value=)
+```
+
+
+```{r}
+ggplot(Owner1, aes(EDUC1, fill = EDUC1)) + 
+  
+  geom_bar(show.legend = TRUE)+
+  
+  labs(x="Education Level",
+       y="Count",
+       title="Education of Single Business Owners") +
+  
+  #Need legend 
+ 
+  theme_bw()
+```
+
+
+# How much money did they start the business with?
+```{r}
+ggplot(data = Owner1, mapping = aes(x = #NEED MONEY VALUE)) +
+  
+  geom_histogram() +
+  
+  theme_bw()
+```
+
+#BORN IN THE US? BORN1
